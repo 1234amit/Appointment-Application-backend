@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:17
+    container_name: appointment_postgres
+    environment:
+      POSTGRES_DB: appointment_management
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: amit1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+
+  app:
+    build: .
+    container_name: appointment_app
+    ports:
+      - "8082:8082"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/appointment_management
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: amit1234
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: true
+      SPRING_APPLICATION_NAME: Appointment
+      SERVER_PORT: 8082
+      APP_JWT_ACCESS_TTL_MINUTES: 43200
+      APP_JWT_REFRESH_TTL_DAYS: 30
+      APP_JWT_ISSUER: example-auth-api
+      APP_CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3000
+      APP_CORS_ALLOWED_METHODS: GET,POST,PUT,DELETE,OPTIONS
+      APP_CORS_ALLOWED_HEADERS: Authorization,Content-Type
+      APP_CORS_ALLOW_CREDENTIALS: true
+      JWT_SECRET: j2nF8mQyq7K0fP9uS1t3V5x8Y2c4B6d9L0p3R6u8W1z4H7k9M2q5T7w9Z1x3C5
+
+volumes:
+  postgres_data:
