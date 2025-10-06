@@ -4,14 +4,16 @@ public class TokenResponse {
     private String accessToken;
     private String refreshToken;
     private String message;      // <-- new
+    private UserDto user;
 
 
     public TokenResponse() { }
 
-    public TokenResponse(String accessToken, String refreshToken, String message) {
+    public TokenResponse(String accessToken, String refreshToken, String message, UserDto user) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.message = message;
+        this.user = user;
     }
 
     public String getAccessToken() { return accessToken; }
@@ -28,4 +30,7 @@ public class TokenResponse {
     public void setMessage(String message){
         this.message = message;
     }
+
+    public UserDto getUser() { return user; }
+    public void setUser(UserDto user) { this.user = user; }
 }

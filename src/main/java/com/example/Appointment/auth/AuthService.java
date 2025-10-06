@@ -32,6 +32,10 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
     }
 
+    private UserDto toDto(User u) {
+        return new UserDto(u.getId(), u.getFullName(), u.getEmail(), u.getRole().name());
+    }
+
     public TokenResponse register(RegisterRequest req) {
         if (userRepository.existsByEmail(req.getEmail())) {
             throw new IllegalArgumentException("Email already used");
@@ -39,7 +43,6 @@ public class AuthService {
 
         Role role = (req.getRole() == null) ? Role.USER : req.getRole();
 
-        // Without Lombok builder:
         User user = new User();
         user.setFullName(req.getFullName());
         user.setEmail(req.getEmail());
@@ -58,7 +61,7 @@ public class AuthService {
         user.setRefreshTokenExpiry(jwtService.getExpiry(refresh));
         userRepository.save(user);
 
-        return new TokenResponse("Register successfully", access, refresh);
+        return new TokenResponse(access, refresh, "Register successfully", toDto(user));
     }
 
     public TokenResponse login(LoginRequest req) {
@@ -79,7 +82,7 @@ public class AuthService {
         user.setRefreshTokenExpiry(jwtService.getExpiry(refresh));
         userRepository.save(user);
 
-        return new TokenResponse("Login successfully", access, refresh);
+        return new TokenResponse(access, refresh, "Login successfully", toDto(user));
     }
 
     public TokenResponse refresh(RefreshRequest req) {
@@ -108,7 +111,7 @@ public class AuthService {
         user.setRefreshTokenExpiry(jwtService.getExpiry(newRefresh));
         userRepository.save(user);
 
-        return new TokenResponse("Token refreshed", access, newRefresh);
+        return new TokenResponse(access, newRefresh, "Token refreshed", toDto(user));
     }
 
     public void logout(String email) {
